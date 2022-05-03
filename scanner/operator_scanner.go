@@ -3,10 +3,10 @@ package scanner
 import "github.com/bookrun-go/calculator/token"
 
 var operatorMap = map[rune]*token.TokenValue{
-	'+': {Tok: token.ADD, Value: token.EmptyValue},
-	'-': {Tok: token.SUB, Value: token.EmptyValue},
-	'*': {Tok: token.MUL, Value: token.EmptyValue},
-	'/': {Tok: token.QUO, Value: token.EmptyValue},
+	'+': {Tok: token.ADD, Value: floatNaN},
+	'-': {Tok: token.SUB, Value: floatNaN},
+	'*': {Tok: token.MUL, Value: floatNaN},
+	'/': {Tok: token.QUO, Value: floatNaN},
 }
 
 type OperatorScanner struct {
@@ -17,7 +17,7 @@ func (OperatorScanner) Scan(formula []rune, startPos int) (*token.TokenValue, in
 	if !ok {
 		return &token.TokenValue{
 			Tok:   token.Illegal,
-			Value: token.IllegalValue,
+			Value: floatNaN,
 		}, startPos
 	}
 

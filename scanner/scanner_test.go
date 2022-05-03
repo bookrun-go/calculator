@@ -13,5 +13,5 @@ func TestScanner(t *testing.T) {
 		panic(err)
 	}
 
-	fmt.Println(tk)
+	fmt.Printf("%#+v\n", tk)
 }
