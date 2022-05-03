@@ -1,8 +1,10 @@
 package token
 
-type EmptyValue struct {
+var EmptyValue = emptyValue{}
+
+type emptyValue struct {
 }
 
-func (EmptyValue) UnmarshalValue(result interface{}) error {
+func (emptyValue) UnmarshalValue(result interface{}) error {
 	return nil
 }

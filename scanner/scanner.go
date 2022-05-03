@@ -10,7 +10,7 @@ import (
 func NewScanner(fomula string, opts ...ScannerOption) *Scanner {
 	scnanner := &Scanner{
 		fomula:     []rune(fomula),
-		currentPos: -1,
+		currentPos: 0,
 	}
 	scnanner.fomulaLen = len(fomula)
 

@@ -16,7 +16,7 @@ const (
 type NumberScanner struct {
 }
 
-func (ns NumberScanner) Scan(formula []rune, startPos int) (tokValue *token.TokenValue, _ int) {
+func (ns NumberScanner) Scan(formula []rune, startPos int) (_ *token.TokenValue, _ int) {
 	startLegal := ns.Of(formula[startPos]) // 检查第一个是否合法
 	if !startLegal {
 		return &token.TokenValue{
@@ -31,7 +31,7 @@ func (ns NumberScanner) Scan(formula []rune, startPos int) (tokValue *token.Toke
 	for ; startPos < len(formula); startPos++ {
 		legal := ns.Of(formula[startPos])
 		if !legal {
-			return tokValue, startPos
+			break
 		}
 		runeVal = append(runeVal, formula[startPos])
 	}
@@ -45,7 +45,7 @@ func (ns NumberScanner) Scan(formula []rune, startPos int) (tokValue *token.Toke
 }
 
 func (NumberScanner) Precedence() int {
-	return 3
+	return 1
 }
 
 func (NumberScanner) Of(char rune) bool {
