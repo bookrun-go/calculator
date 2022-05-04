@@ -6,7 +6,7 @@ type ParenthesesParser struct {
 	*ParserAbstract
 }
 
-func (pp *ParenthesesParser) Parse3() error {
+func (pp *ParenthesesParser) Parse() error {
 	pp.startIndex++
 
 	if pp.maxIndex < pp.startIndex {

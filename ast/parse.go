@@ -9,8 +9,7 @@ import (
 type Parser interface {
 	Doing() error
 	Root() Node
-	Parse3() error
-	// Parse(tvs []*token.TokenValue, startIndex int) (endIndex int, _ Node, _ error)
+	Parse() error
 }
 
 type ParserAbstract struct {
@@ -78,7 +77,7 @@ func (pa *ParserAbstract) NewChildParser(childEndTok token.Token) (Parser, func(
 	pa.endTok = childEndTok
 	pa.curOpNode = &OperatorNode{}
 	pa.root = pa.curOpNode
-	op, err := ParseResgister.GetParser2(pa.tvs[pa.startIndex].Tok, pa)
+	op, err := ParseResgister.GetParser(pa.tvs[pa.startIndex].Tok, pa)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -102,12 +101,12 @@ func (pa *ParserAbstract) Doing() error {
 			break
 		}
 
-		p, err := ParseResgister.GetParser2(pa.tvs[pa.startIndex].Tok, pa)
+		p, err := ParseResgister.GetParser(pa.tvs[pa.startIndex].Tok, pa)
 		if err != nil {
 			return err
 		}
 
-		err = p.Parse3()
+		err = p.Parse()
 		if err != nil {
 			return err
 		}
@@ -126,7 +125,7 @@ func NewParser(tvs []*token.TokenValue, startIndex int) (Parser, error) {
 	pa.root = root
 	pa.curOpNode = root
 
-	op, err := ParseResgister.GetParser2(tvs[0].Tok, pa)
+	op, err := ParseResgister.GetParser(tvs[0].Tok, pa)
 	if err != nil {
 		return nil, err
 	}
@@ -144,24 +143,3 @@ func NewParser(tvs []*token.TokenValue, startIndex int) (Parser, error) {
 第三个如果遇见左括号，则先把括号内当一个节点，算出后，需要对比两个节点的操作符合优先级，如果第一个操作符优先，则把两个节点合并下沉；如果第二个操作符优先，则保持原来第一个节点为左节点，生成新的操作节点，把右节点放到新操作节点左节点。
 
 */
-
-// type CommanParser struct {
-// }
-
-// func (CommanParser) Parse(tvs []*token.TokenValue, startIndex int) (endIndex int, _ Node, _ error) {
-
-// }
-
-// func (CommanParser) LeftNode(tvs []*token.TokenValue, startIndex int) (_ int, _ Node, _ error) {
-// 	maxIndex := len(tvs) - 1
-// 	if startIndex > maxIndex {
-// 		return
-// 	}
-
-// 	firstTv := tvs[startIndex]
-
-// 	if firstTv.Tok.IsSeparator() {
-
-// 	}
-
-// }
