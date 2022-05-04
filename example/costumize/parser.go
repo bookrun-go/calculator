@@ -1,4 +1,4 @@
-package consumize
+package costumize
 
 import (
 	"github.com/bookrun-go/calculator/ast"

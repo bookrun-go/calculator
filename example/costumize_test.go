@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/bookrun-go/calculator/ast"
-	"github.com/bookrun-go/calculator/example/consumize"
+	"github.com/bookrun-go/calculator/example/costumize"
 	"github.com/bookrun-go/calculator/scanner"
 	"github.com/bookrun-go/calculator/token"
 )
@@ -13,7 +13,7 @@ import (
 func TestConsumized(t *testing.T) {
 	scanner := scanner.NewScanner("A2(5)", scanner.WithAddScanners(
 		scanner.NumberScanner{}, scanner.SeparatorScanner{}, scanner.OperatorScanner{},
-		consumize.MyScanner{}))
+		costumize.MyScanner{}))
 
 	tk, err := scanner.Scan()
 	if err != nil {
@@ -21,7 +21,7 @@ func TestConsumized(t *testing.T) {
 	}
 
 	ast.ParseResgister.Registe(token.NumberReserve, func(pa *ast.ParserAbstract) ast.Parser {
-		return consumize.NewParser(pa, consumize.NewNode)
+		return costumize.NewParser(pa, costumize.NewNode)
 	})
 
 	op, err := ast.NewParser(tk, 0)
@@ -38,7 +38,7 @@ func TestConsumized(t *testing.T) {
 
 	fmt.Println(node.Result())
 
-	consumize.UpdateCastMap('A', 2)
+	costumize.UpdateCastMap('A', 2)
 
 	fmt.Println(node.Result())
 
