@@ -25,10 +25,6 @@ func (op *OperatorNode) AddNode(node Node) error {
 }
 
 func (op OperatorNode) Result() (float64, error) {
-	if !op.tok.IsOperator() {
-		return 0, errors.New("token not operator")
-	}
-
 	if op.left == nil {
 		return 0, errors.New("left can't empty")
 	}

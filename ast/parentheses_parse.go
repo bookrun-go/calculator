@@ -32,6 +32,11 @@ func (pp *ParenthesesParser) Parse3() error {
 
 	//
 	pp.startIndex++
+	if pp.tvs[pp.startIndex].Tok == pp.endTok {
+		pp.AddLastNode(childRoot)
+		return nil
+	}
+
 	if !pp.tvs[pp.startIndex].Tok.IsOperator() {
 		return ErrorFomulaFormat
 	}
