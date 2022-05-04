@@ -30,6 +30,9 @@ func (op OperatorNode) Result() (float64, error) {
 	}
 
 	if op.right == nil {
+		if !op.tok.IsIllegal() {
+			return 0, ErrorFomulaFormat
+		}
 		return op.left.Result()
 	}
 
