@@ -8,10 +8,13 @@ import (
 
 var ParseResgister = parseResgister{}
 
+type NewParserFunc func(*ParserAbstract) Parser
+
 type parseResgister struct {
+	parseMap map[token.Token]NewParserFunc
 }
 
-func (parseResgister) GetParser(tok token.Token, pa *ParserAbstract) (Parser, error) {
+func (pr *parseResgister) GetParser(tok token.Token, pa *ParserAbstract) (Parser, error) {
 	if tok.IsOperator() {
 		return nil, errors.New("operator not parser")
 	}
@@ -24,5 +27,22 @@ func (parseResgister) GetParser(tok token.Token, pa *ParserAbstract) (Parser, er
 		return &ParenthesesParser{ParserAbstract: pa}, nil
 	}
 
-	return nil, errors.New("operator not found parser")
+	if pr.parseMap == nil {
+		return nil, errors.New("operator not found parser")
+	}
+
+	f, ok := pr.parseMap[tok]
+	if !ok {
+		return nil, errors.New("operator not found parser")
+	}
+
+	return f(pa), nil
+}
+
+func (pr *parseResgister) Registe(tok token.Token, f NewParserFunc) {
+	if pr.parseMap == nil {
+		pr.parseMap = make(map[token.Token]NewParserFunc)
+	}
+
+	pr.parseMap[tok] = f
 }

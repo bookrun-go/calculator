@@ -119,6 +119,26 @@ func (pa *ParserAbstract) Root() Node {
 	return pa.root
 }
 
+func (pa *ParserAbstract) IsLastOne() bool {
+	return pa.startIndex == pa.maxIndex
+}
+
+func (pa *ParserAbstract) Step() {
+	pa.startIndex++
+}
+
+func (pa *ParserAbstract) Back() {
+	pa.startIndex--
+}
+
+func (pa *ParserAbstract) CurTv() *token.TokenValue {
+	return pa.tvs[pa.startIndex]
+}
+
+func (pa *ParserAbstract) IsEndTok(tok token.Token) bool {
+	return pa.endTok == tok
+}
+
 func NewParser(tvs []*token.TokenValue, startIndex int) (Parser, error) {
 	root := &OperatorNode{}
 	pa := &ParserAbstract{tvs: tvs, startIndex: startIndex, maxIndex: len(tvs) - 1}

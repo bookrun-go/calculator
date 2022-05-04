@@ -1,21 +1,31 @@
-package ast
+package consumize
 
-import "github.com/bookrun-go/calculator/token"
+import (
+	"github.com/bookrun-go/calculator/ast"
+	"github.com/bookrun-go/calculator/token"
+)
 
-type NumberParser struct {
-	*ParserAbstract
+func NewParser(pa *ast.ParserAbstract, newNodeFunc func(char rune) ast.Node) ast.Parser {
+	return &Parser{
+		ParserAbstract: pa,
+		newNodeFunc:    newNodeFunc,
+	}
 }
 
-// 4+5+ or 4+(....)+
-func (np *NumberParser) GenNode() error {
+type Parser struct {
+	*ast.ParserAbstract
+	newNodeFunc func(char rune) ast.Node
+}
+
+func (np Parser) GenNode() error {
 	curTv := np.CurTv()
-	val := float64(0)
+	val := rune(0)
 	err := curTv.Value.UnmarshalValue(&val)
 	if err != nil {
 		return err
 	}
 
-	node := &NumberNode{val: val}
+	node := np.newNodeFunc(rune(val))
 	if np.IsLastOne() {
 		np.Step()
 		np.AddLastNode(node)
@@ -30,11 +40,11 @@ func (np *NumberParser) GenNode() error {
 	}
 
 	tok := token.Illegal
-	if curTv.Tok.IsLeft() || curTv.Tok == token.NumberReserve {
+	if curTv.Tok.IsLeft() || curTv.Tok.IsLiteral() {
 		np.Back() // 2(5+2) 这种表达式，默认为*需要回退。
 		tok = token.MUL
 	} else if !curTv.Tok.IsOperator() {
-		return ErrorFomulaFormat
+		return ast.ErrorFomulaFormat
 	} else {
 		tok = curTv.Tok
 	}
