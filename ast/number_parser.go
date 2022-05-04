@@ -1,5 +1,7 @@
 package ast
 
+import "github.com/bookrun-go/calculator/token"
+
 type NumberParser struct {
 	*ParserAbstract
 }
@@ -18,10 +20,18 @@ func (np *NumberParser) Parse() error {
 		np.AddLastNode(node)
 		return nil
 	}
-	if !np.tvs[np.startIndex].Tok.IsOperator() {
+
+	tok := token.Illegal
+	if np.tvs[np.startIndex].Tok.IsLeft() {
+		np.startIndex-- // 2(5+2) 这种表达式，默认为*需要回退。
+		tok = token.MUL
+	} else if !np.tvs[np.startIndex].Tok.IsOperator() {
 		return ErrorFomulaFormat
+	} else {
+		tok = np.tvs[np.startIndex].Tok
 	}
-	err := np.AddNode(node, np.tvs[np.startIndex].Tok)
+
+	err := np.AddNode(node, tok)
 	if err != nil {
 		return err
 	}
