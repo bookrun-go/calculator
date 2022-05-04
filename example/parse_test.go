@@ -9,22 +9,24 @@ import (
 )
 
 func TestParse1(t *testing.T) {
-	scanner := scanner.NewScanner("(0*487)+90 / 45 * 65", scanner.WithAddScanners(scanner.NumberScanner{}, scanner.SeparatorScanner{}, scanner.OperatorScanner{}))
+	scanner := scanner.NewScanner("((3+0*487 + 1))+(90) / (45 * 65) + 3(5)/5", scanner.WithAddScanners(scanner.NumberScanner{}, scanner.SeparatorScanner{}, scanner.OperatorScanner{}))
 
 	tk, err := scanner.Scan()
 	if err != nil {
 		panic(err)
 	}
 
-	op, err := ast.NewParser(tk)
+	op, err := ast.NewParser(tk, 0)
 	if err != nil {
 		panic(err)
 	}
 
-	node, err := op.Parse2()
+	err = op.Doing()
 	if err != nil {
 		panic(err)
 	}
+
+	node := op.Root()
 
 	fmt.Println(node.Result())
 }
