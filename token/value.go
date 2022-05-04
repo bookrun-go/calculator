@@ -6,5 +6,5 @@ type Value interface {
 
 type TokenValue struct {
 	Tok   Token
-	Value Value
+	Value float64
 }

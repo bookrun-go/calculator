@@ -13,16 +13,18 @@ const (
 
 	separator_beg
 	LeftParentheses
-	RightParentheses
 	LeftBracket
+	separator_mid
+	RightParentheses
 	RighBracket
 	separator_end
 
 	operator_beg
-	ADD // +
-	SUB // -
-	MUL // *
-	QUO // /
+	ADD             // +
+	SUB             // -
+	MUL             // *
+	QUO             // /
+	OperatorReserve // 保留操作符
 	operator_end
 )
 
@@ -42,6 +44,31 @@ func (tok Token) IsSeparator() bool {
 	return tok < separator_end && tok > separator_beg
 }
 
+func (tok Token) IsLeft() bool {
+	return tok < separator_mid && tok > separator_beg
+}
+
+func (tok Token) IsRigh() bool {
+	return tok > separator_mid && tok < separator_end
+}
+
 func (tok Token) IsOperator() bool {
 	return tok < operator_end && tok > operator_beg
+}
+
+func (tok Token) Precedence() int {
+	switch tok {
+	case ADD, SUB:
+		{
+			return 1
+		}
+	case MUL, QUO:
+		{
+			return 2
+		}
+	default:
+		{
+			return 3
+		}
+	}
 }

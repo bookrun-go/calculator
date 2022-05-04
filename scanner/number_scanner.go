@@ -21,11 +21,9 @@ func (ns NumberScanner) Scan(formula []rune, startPos int) (_ *token.TokenValue,
 	if !startLegal {
 		return &token.TokenValue{
 			Tok:   token.Illegal,
-			Value: token.IllegalValue,
+			Value: floatNaN,
 		}, startPos
 	}
-
-	float64Value := &token.Float64Value{}
 
 	var runeVal []rune
 	for ; startPos < len(formula); startPos++ {
@@ -36,11 +34,11 @@ func (ns NumberScanner) Scan(formula []rune, startPos int) (_ *token.TokenValue,
 		runeVal = append(runeVal, formula[startPos])
 	}
 
-	float64Value.Val, _ = strconv.ParseFloat(string(runeVal), 64)
+	val, _ := strconv.ParseFloat(string(runeVal), 64)
 
 	return &token.TokenValue{
 		Tok:   token.Number,
-		Value: float64Value,
+		Value: val,
 	}, startPos
 }
 

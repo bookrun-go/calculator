@@ -1,5 +1,5 @@
 package ast
 
 type Node interface {
-	UnmarshalValue(interface{}) error
+	Result() (float64, error)
 }

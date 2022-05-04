@@ -1,14 +1,18 @@
 package scanner
 
-import "github.com/bookrun-go/calculator/token"
+import (
+	"math"
+
+	"github.com/bookrun-go/calculator/token"
+)
 
 var _ IScanner = SeparatorScanner{}
 
 var separatorMap = map[rune]*token.TokenValue{
-	'(': {Tok: token.LeftParentheses, Value: token.EmptyValue},
-	')': {Tok: token.RightParentheses, Value: token.EmptyValue},
-	'[': {Tok: token.LeftBracket, Value: token.EmptyValue},
-	']': {Tok: token.LeftBracket, Value: token.EmptyValue},
+	'(': {Tok: token.LeftParentheses, Value: floatNaN},
+	')': {Tok: token.RightParentheses, Value: math.NaN()},
+	'[': {Tok: token.LeftBracket, Value: floatNaN},
+	']': {Tok: token.LeftBracket, Value: floatNaN},
 }
 
 type SeparatorScanner struct {
@@ -19,7 +23,7 @@ func (SeparatorScanner) Scan(formula []rune, startPos int) (*token.TokenValue, i
 	if !ok {
 		return &token.TokenValue{
 			Tok:   token.Illegal,
-			Value: token.IllegalValue,
+			Value: floatNaN,
 		}, startPos
 	}
 
