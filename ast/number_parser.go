@@ -7,7 +7,7 @@ type NumberParser struct {
 }
 
 // 4+5+ or 4+(....)+
-func (np *NumberParser) Parse() error {
+func (np *NumberParser) GenNode() error {
 	node := &NumberNode{val: np.tvs[np.startIndex].Value}
 	if np.startIndex == np.maxIndex {
 		np.startIndex++

@@ -9,7 +9,7 @@ import (
 type Parser interface {
 	Doing() error
 	Root() Node
-	Parse() error
+	GenNode() error
 }
 
 type ParserAbstract struct {
@@ -106,7 +106,7 @@ func (pa *ParserAbstract) Doing() error {
 			return err
 		}
 
-		err = p.Parse()
+		err = p.GenNode()
 		if err != nil {
 			return err
 		}

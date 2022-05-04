@@ -9,7 +9,7 @@ import (
 )
 
 func TestParse1(t *testing.T) {
-	scanner := scanner.NewScanner("((3+0*487 + 1))+(90) / (45 * 65) + 3(5)/5", scanner.WithAddScanners(scanner.NumberScanner{}, scanner.SeparatorScanner{}, scanner.OperatorScanner{}))
+	scanner := scanner.NewScanner("((((3+0*487 + 1))))+(90) / (45 * 65) + 3(5)/5", scanner.WithAddScanners(scanner.NumberScanner{}, scanner.SeparatorScanner{}, scanner.OperatorScanner{}))
 
 	tk, err := scanner.Scan()
 	if err != nil {
