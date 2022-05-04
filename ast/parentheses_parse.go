@@ -6,136 +6,41 @@ type ParenthesesParser struct {
 	*ParserAbstract
 }
 
-func (pp *ParenthesesParser) Parse2() (Node, error) {
+func (pp *ParenthesesParser) Parse3() error {
 	pp.startIndex++
 
 	if pp.maxIndex < pp.startIndex {
-		return nil, nil
+		return nil
 	}
 
-	root := OperatorNode{}
-
-	p, err := ParseResgister.GetParser2(pp.tvs[pp.startIndex].Tok, pp.ParserAbstract)
+	childParse, recoveryFunc, err := pp.NewChildParser(token.RightParentheses)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	node, err := p.Parse2()
+	err = childParse.Doing()
 	if err != nil {
-		return nil, err
+		return err
 	}
+	childRoot := childParse.Root()
+	recoveryFunc()
 
-	root.left = node
-
-	if pp.startIndex > pp.maxIndex { // 结束
-		return root, nil
-	}
-
-	if pp.startIndex+2 > pp.maxIndex {
-		return nil, FomulaFormatError
-	}
-
-	if !pp.tvs[pp.startIndex+1].Tok.IsOperator() {
-		return nil, FomulaFormatError
-	}
-	root.tok = pp.tvs[pp.startIndex+1].Tok
-
-	pp.startIndex += 2
-	if pp.tvs[pp.startIndex].Tok.IsSeparator() {
-		p, err := ParseResgister.GetParser2(pp.tvs[pp.startIndex].Tok, pp.ParserAbstract)
-		if err != nil {
-			return nil, err
-		}
-
-		node, err := p.Parse2()
-		if err != nil {
-			return nil, err
-		}
-
-		root.right = node
-	} else if pp.tvs[pp.startIndex].Tok.IsLiteral() {
-		root.right = NumberNode{val: pp.tvs[pp.startIndex].Value}
-	} else {
-		return nil, FomulaFormatError
-	}
-
-	if pp.maxIndex < pp.startIndex+1 {
-		return root, nil // 结束
-	}
-
-	if pp.tvs[pp.startIndex+1].Tok.IsSeparator() {
+	if pp.maxIndex == pp.startIndex {
 		pp.startIndex++
-		return root, nil
+		return pp.AddLastNode(childRoot)
 	}
 
-	if !pp.tvs[pp.startIndex+1].Tok.IsOperator() {
-		return nil, FomulaFormatError
+	//
+	pp.startIndex++
+	if !pp.tvs[pp.startIndex].Tok.IsOperator() {
+		return ErrorFomulaFormat
+	}
+	err = pp.AddNode(childRoot, pp.tvs[pp.startIndex].Tok)
+	if err != nil {
+		return err
 	}
 
-	if root.tok.Precedence() > pp.tvs[pp.startIndex+1].Tok.Precedence() {
-		newRoot := OperatorNode{
-			tok:  pp.tvs[pp.startIndex+1].Tok,
-			left: root,
-		}
-		root = newRoot
-
-		if pp.startIndex+2 > pp.maxIndex { // 结束
-			return root, nil
-		}
-
-		pp.startIndex += 2
-		p, err := ParseResgister.GetParser2(pp.tvs[pp.startIndex].Tok, pp.ParserAbstract)
-		if err != nil {
-			return nil, err
-		}
-
-		node, err := p.Parse2()
-		if err != nil {
-			return nil, err
-		}
-		root.right = node
-
-	} else {
-		newRight := OperatorNode{
-			tok:  pp.tvs[pp.startIndex+1].Tok,
-			left: root.right,
-		}
-
-		if pp.startIndex+2 > pp.maxIndex { // 结束
-			return root, nil
-		}
-
-		pp.startIndex += 2
-		p, err := ParseResgister.GetParser2(pp.tvs[pp.startIndex].Tok, pp.ParserAbstract)
-		if err != nil {
-			return nil, err
-		}
-
-		node, err := p.Parse2()
-		if err != nil {
-			return nil, err
-		}
-		newRight.right = node
-
-		root.right = newRight
-
-	}
-
-	return root, nil
-}
-
-func (ParenthesesParser) Parse(tvs []*token.TokenValue, startIndex int) (endIndex int, _ Node, _ error) {
-	startIndex++
-
-	maxIndex := len(tvs) - 1
-	if maxIndex < startIndex {
-		return startIndex, nil, nil
-	}
-
-	root := OperatorNode{}
-	for tvs[startIndex].Tok != token.RightParentheses || startIndex > maxIndex {
-
-	}
-
-	return startIndex, root, nil
+	//
+	pp.startIndex++
+	return nil
 }

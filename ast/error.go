@@ -2,4 +2,4 @@ package ast
 
 import "errors"
 
-var FomulaFormatError = errors.New("fomula format error")
+var ErrorFomulaFormat = errors.New("fomula format error")
