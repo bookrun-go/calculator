@@ -8,7 +8,13 @@ type NumberParser struct {
 
 // 4+5+ or 4+(....)+
 func (np *NumberParser) GenNode() error {
-	node := &NumberNode{val: np.tvs[np.startIndex].Value}
+	val := float64(8)
+	err := np.tvs[np.startIndex].Value.UnmarshalValue(&val)
+	if err != nil {
+		return err
+	}
+
+	node := &NumberNode{val: val}
 	if np.startIndex == np.maxIndex {
 		np.startIndex++
 		np.AddLastNode(node)
@@ -31,7 +37,7 @@ func (np *NumberParser) GenNode() error {
 		tok = np.tvs[np.startIndex].Tok
 	}
 
-	err := np.AddNode(node, tok)
+	err = np.AddNode(node, tok)
 	if err != nil {
 		return err
 	}

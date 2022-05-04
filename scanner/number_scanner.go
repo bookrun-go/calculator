@@ -21,7 +21,7 @@ func (ns NumberScanner) Scan(formula []rune, startPos int) (_ *token.TokenValue,
 	if !startLegal {
 		return &token.TokenValue{
 			Tok:   token.Illegal,
-			Value: floatNaN,
+			Value: token.F64Value{},
 		}, startPos
 	}
 
@@ -38,7 +38,7 @@ func (ns NumberScanner) Scan(formula []rune, startPos int) (_ *token.TokenValue,
 
 	return &token.TokenValue{
 		Tok:   token.Number,
-		Value: val,
+		Value: token.F64Value{Val: val},
 	}, startPos
 }
 
