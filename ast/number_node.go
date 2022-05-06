@@ -1,9 +1,11 @@
 package ast
 
+import "github.com/bookrun-go/calculator/token"
+
 type NumberNode struct {
-	val float64
+	Val token.Value
 }
 
-func (num NumberNode) Result() (float64, error) {
-	return num.val, nil
+func (num NumberNode) Result() (token.Value, error) {
+	return num.Val, nil
 }

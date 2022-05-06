@@ -5,27 +5,20 @@ import (
 	"github.com/bookrun-go/calculator/token"
 )
 
-func NewParser(pa *ast.ParserAbstract, newNodeFunc func(char rune) ast.Node) ast.Parser {
+func NewParser(pa *ast.ParserAbstract) ast.Parser {
 	return &Parser{
 		ParserAbstract: pa,
-		newNodeFunc:    newNodeFunc,
 	}
 }
 
 type Parser struct {
 	*ast.ParserAbstract
-	newNodeFunc func(char rune) ast.Node
 }
 
 func (np Parser) GenNode() error {
 	curTv := np.CurTv()
-	val := rune(0)
-	err := curTv.Value.UnmarshalValue(&val)
-	if err != nil {
-		return err
-	}
 
-	node := np.newNodeFunc(rune(val))
+	node := &Node{val: curTv.Value}
 	if np.IsLastOne() {
 		np.Step()
 		np.AddLastNode(node)
@@ -49,7 +42,7 @@ func (np Parser) GenNode() error {
 		tok = curTv.Tok
 	}
 
-	err = np.AddNode(node, tok)
+	err := np.AddNode(node, tok)
 	if err != nil {
 		return err
 	}

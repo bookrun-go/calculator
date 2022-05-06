@@ -22,6 +22,38 @@ type ParserAbstract struct {
 	endTok     token.Token   // recovery
 }
 
+func (np *ParserAbstract) AddNumberNode(node Node) error {
+	if np.IsLastOne() {
+		np.Step()
+		np.AddLastNode(node)
+		return nil
+	}
+
+	np.Step()
+	curTv := np.CurTv()
+	if np.IsEndTok(curTv.Tok) {
+		np.AddLastNode(node)
+		return nil
+	}
+
+	tok := token.Illegal
+	if curTv.Tok.IsLeft() || curTv.Tok == token.NumberReserve {
+		np.Back() // 2(5+2) 这种表达式，默认为*需要回退。
+		tok = token.MUL
+	} else if !curTv.Tok.IsOperator() {
+		return ErrorFomulaFormat
+	} else {
+		tok = curTv.Tok
+	}
+
+	err := np.AddNode(node, tok)
+	if err != nil {
+		return err
+	}
+
+	np.Step()
+	return nil
+}
 func (pa *ParserAbstract) AddLastNode(node Node) error {
 	if pa.curOpNode.left == nil {
 		pa.curOpNode.left = node

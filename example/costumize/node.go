@@ -1,17 +1,13 @@
 package costumize
 
-import "github.com/bookrun-go/calculator/ast"
+import (
+	"github.com/bookrun-go/calculator/token"
+)
 
 type Node struct {
-	char    rune
-	castMap *map[rune]float64
+	val token.Value
 }
 
-func (n Node) Result() (float64, error) {
-	res := (*n.castMap)[n.char]
-	return res, nil
-}
-
-func NewNode(char rune) ast.Node {
-	return &Node{char: char, castMap: castMap}
+func (n Node) Result() (token.Value, error) {
+	return n.val, nil
 }

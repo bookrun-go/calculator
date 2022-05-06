@@ -2,6 +2,7 @@ package example
 
 import (
 	"fmt"
+	"math"
 	"testing"
 
 	"github.com/bookrun-go/calculator/ast"
@@ -13,7 +14,7 @@ import (
 func TestConsumized(t *testing.T) {
 	scanner := scanner.NewScanner("A2(5)", scanner.WithAddScanners(
 		scanner.NumberScanner{}, scanner.SeparatorScanner{}, scanner.OperatorScanner{},
-		costumize.MyScanner{}))
+		costumize.MyScanner{CastMap: costumize.CastMap}))
 
 	tk, err := scanner.Scan()
 	if err != nil {
@@ -21,7 +22,7 @@ func TestConsumized(t *testing.T) {
 	}
 
 	ast.ParseResgister.Registe(token.NumberReserve, func(pa *ast.ParserAbstract) ast.Parser {
-		return costumize.NewParser(pa, costumize.NewNode)
+		return costumize.NewParser(pa)
 	})
 
 	op, err := ast.NewParser(tk, 0)
@@ -42,4 +43,12 @@ func TestConsumized(t *testing.T) {
 
 	fmt.Println(node.Result())
 
+}
+
+func TestNan(t *testing.T) {
+	f := math.NaN()
+
+	ss := f / 0
+
+	fmt.Println(math.IsNaN(ss))
 }

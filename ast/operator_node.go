@@ -24,49 +24,26 @@ func (op *OperatorNode) AddNode(node Node) error {
 	return nil
 }
 
-func (op OperatorNode) Result() (float64, error) {
+func (op OperatorNode) Result() (token.Value, error) {
 	if op.left == nil {
-		return 0, errors.New("left can't empty")
+		return token.EmptyValue{}, errors.New("left can't empty")
 	}
 
 	if op.right == nil {
 		if !op.tok.IsIllegal() {
-			return 0, ErrorFomulaFormat
+			return token.EmptyValue{}, ErrorFomulaFormat
 		}
 		return op.left.Result()
 	}
 
-	opFunc, ok := tokenOperatorFunc[op.tok]
-	if !ok {
-		return 0, errors.New("not suppert operator")
-	}
-
 	leftVal, err := op.left.Result()
 	if err != nil {
-		return 0, err
+		return token.EmptyValue{}, err
 	}
 	rightVal, err := op.right.Result()
 	if err != nil {
-		return 0, err
+		return token.EmptyValue{}, err
 	}
 
-	return opFunc(leftVal, rightVal)
-}
-
-var tokenOperatorFunc = map[token.Token]func(v1, v2 float64) (float64, error){
-	token.ADD: func(v1, v2 float64) (float64, error) {
-		return v1 + v2, nil
-	},
-	token.SUB: func(v1, v2 float64) (float64, error) {
-		return v1 - v2, nil
-	},
-	token.MUL: func(v1, v2 float64) (float64, error) {
-		return v1 * v2, nil
-	},
-	token.QUO: func(v1, v2 float64) (float64, error) {
-		if v2 == 0 {
-			return 0, errors.New("0 cannot be used as a divisor")
-		}
-		return v1 / v2, nil
-	},
+	return rightVal.Operate(leftVal, op.tok)
 }

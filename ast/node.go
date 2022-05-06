@@ -1,5 +1,7 @@
 package ast
 
+import "github.com/bookrun-go/calculator/token"
+
 type Node interface {
-	Result() (float64, error)
+	Result() (token.Value, error)
 }

@@ -3,6 +3,7 @@ package costumize
 import "github.com/bookrun-go/calculator/token"
 
 type MyScanner struct {
+	CastMap *map[rune]float64
 }
 
 func (ms MyScanner) Scan(formula []rune, startPos int) (tv *token.TokenValue, nextPos int) {
@@ -16,7 +17,7 @@ func (ms MyScanner) Scan(formula []rune, startPos int) (tv *token.TokenValue, ne
 
 	tv = &token.TokenValue{
 		Tok:   token.NumberReserve,
-		Value: MyValue{str: formula[startPos]},
+		Value: MyValue{str: formula[startPos], castMap: ms.CastMap},
 	}
 
 	startPos++
