@@ -9,8 +9,9 @@ import (
 var _ IScanner = NumberScanner{}
 
 const (
-	NumberZero = '0'
-	NumberNine = '9'
+	NumberZero  = '0'
+	NumberNine  = '9'
+	NumberPoint = '.'
 )
 
 type NumberScanner struct {
@@ -27,7 +28,7 @@ func (ns NumberScanner) Scan(formula []rune, startPos int) (_ *token.TokenValue,
 
 	var runeVal []rune
 	for ; startPos < len(formula); startPos++ {
-		legal := ns.Of(formula[startPos])
+		legal := ns.of(formula[startPos])
 		if !legal {
 			break
 		}
@@ -44,6 +45,14 @@ func (ns NumberScanner) Scan(formula []rune, startPos int) (_ *token.TokenValue,
 
 func (NumberScanner) Precedence() int {
 	return 1
+}
+
+func (NumberScanner) of(char rune) bool {
+	if char == NumberPoint {
+		return true
+	}
+
+	return char >= NumberZero && char <= NumberNine
 }
 
 func (NumberScanner) Of(char rune) bool {
