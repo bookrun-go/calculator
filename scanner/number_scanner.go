@@ -42,7 +42,7 @@ func (ns NumberScanner) Scan(formula []rune, startPos int) (_ *token.TokenValue,
 		}
 		runeVal = append(runeVal, formula[startPos])
 	}
-	if ns.isPoint(runeVal[len(runeVal)-1]) {
+	if ns.isPoint(runeVal[len(runeVal)-1]) { // 如果最后一位是小数点，移除
 		startPos--
 		runeVal = runeVal[:len(runeVal)-1]
 	}
