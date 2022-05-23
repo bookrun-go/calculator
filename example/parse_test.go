@@ -100,6 +100,16 @@ func TestParse9(t *testing.T) {
 	}
 }
 
+func TestParse10(t *testing.T) {
+	ok, err := excuteFomula(" 3-2*((-10)*(2+3))+9", 112)
+	if err != nil {
+		t.Fatalf("%+v", err)
+	}
+	if !ok {
+		panic("result not expect")
+	}
+}
+
 func excuteFomula(str string, res float64) (bool, error) {
 	node, err := getNode(str)
 	if err != nil {
