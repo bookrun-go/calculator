@@ -8,8 +8,33 @@ import (
 	"github.com/bookrun-go/calculator/scanner"
 )
 
+//"2-2*3+10"
 func TestParse1(t *testing.T) {
-	scanner := scanner.NewScanner("2-2*3+10", scanner.WithAddScanners(scanner.NumberScanner{}, scanner.SeparatorScanner{}, scanner.OperatorScanner{}))
+	node, err := getNode("2-2*3+10")
+	if err != nil {
+		t.Fatalf("%+v", err)
+	}
+	fmt.Println(node.Result())
+}
+
+func TestParse2(t *testing.T) {
+	node, err := getNode("2-2*(3+10)+24*2")
+	if err != nil {
+		t.Fatalf("%+v", err)
+	}
+	fmt.Println(node.Result())
+}
+
+func TestParse3(t *testing.T) {
+	node, err := getNode("(2-1)*(3+10)+24*2")
+	if err != nil {
+		t.Fatalf("%+v", err)
+	}
+	fmt.Println(node.Result())
+}
+
+func getNode(str string) (ast.Node, error) {
+	scanner := scanner.NewScanner(str, scanner.WithAddScanners(scanner.NumberScanner{}, scanner.SeparatorScanner{}, scanner.OperatorScanner{}))
 
 	tk, err := scanner.Scan()
 	if err != nil {
@@ -28,5 +53,5 @@ func TestParse1(t *testing.T) {
 
 	node := op.Root()
 
-	fmt.Println(node.Result())
+	return node, nil
 }
