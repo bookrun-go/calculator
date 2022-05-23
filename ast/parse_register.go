@@ -15,11 +15,7 @@ type parseResgister struct {
 }
 
 func (pr *parseResgister) GetParser(tok token.Token, pa *ParserAbstract) (Parser, error) {
-	if tok.IsOperator() {
-		return nil, errors.New("operator not parser")
-	}
-
-	if tok == token.Number {
+	if tok == token.Number || tok == token.ADD || tok == token.SUB {
 		return &NumberParser{ParserAbstract: pa}, nil
 	}
 

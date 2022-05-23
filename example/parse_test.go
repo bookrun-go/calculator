@@ -34,6 +34,14 @@ func TestParse3(t *testing.T) {
 	fmt.Println(node.Result())
 }
 
+func TestParse4(t *testing.T) {
+	node, err := getNode("9+(-1*10)-100")
+	if err != nil {
+		t.Fatalf("%+v", err)
+	}
+	fmt.Println(node.Result())
+}
+
 func getNode(str string) (ast.Node, error) {
 	scanner := scanner.NewScanner(str, scanner.WithAddScanners(scanner.NumberScanner{}, scanner.SeparatorScanner{}, scanner.OperatorScanner{}))
 
@@ -49,7 +57,7 @@ func getNode(str string) (ast.Node, error) {
 
 	err = op.Doing()
 	if err != nil {
-		panic(err)
+		panic(fmt.Sprintf("%+v", err))
 	}
 
 	node := op.Root()

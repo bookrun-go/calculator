@@ -24,6 +24,27 @@ type ParserAbstract struct {
 	lowNode *OperatorNode // 保存低优先级node，高优先级node结束时会退到低优先级
 }
 
+func (np *ParserAbstract) AddSymbolNumberNode(tok token.Token) error {
+	if np.curOpNode.left != nil {
+		return ErrorFomulaFormat
+	}
+
+	curTv := np.CurTv()
+
+	if tok == token.ADD {
+		node := &NumberNode{Val: curTv.Value}
+		return np.AddNumberNode(node)
+	}
+
+	opNode := &OperatorNode{
+		left:  &NumberNode{Val: &token.F64Value{Val: 0}},
+		tok:   tok,
+		right: &NumberNode{Val: curTv.Value},
+	}
+
+	return np.AddNumberNode(opNode)
+}
+
 func (np *ParserAbstract) AddNumberNode(node Node) error {
 	if np.IsLastOne() {
 		np.Step()
