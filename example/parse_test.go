@@ -10,36 +10,82 @@ import (
 
 //"2-2*3+10"
 func TestParse1(t *testing.T) {
-	node, err := getNode("2-2*3+10")
+	ok, err := excuteFomula("2-2*3+10", 6)
 	if err != nil {
 		t.Fatalf("%+v", err)
 	}
-
-	fmt.Println(node.Result())
+	if !ok {
+		panic("result not expect")
+	}
 }
 
 func TestParse2(t *testing.T) {
-	node, err := getNode("2-2*(3+10)+24*2")
+	ok, err := excuteFomula("2-2*(3+10)+24*2", 24)
 	if err != nil {
 		t.Fatalf("%+v", err)
 	}
-	fmt.Println(node.Result())
+	if !ok {
+		panic("result not expect")
+	}
 }
 
 func TestParse3(t *testing.T) {
-	node, err := getNode("(2-1)*(3+10)+24*2")
+	ok, err := excuteFomula("(2-1)*(3+10)+24*2", 61)
 	if err != nil {
 		t.Fatalf("%+v", err)
 	}
-	fmt.Println(node.Result())
+	if !ok {
+		panic("result not expect")
+	}
+
 }
 
 func TestParse4(t *testing.T) {
-	node, err := getNode("9+(-1*10)-100")
+	ok, err := excuteFomula("9+(-1*10)-100", -101)
 	if err != nil {
 		t.Fatalf("%+v", err)
 	}
-	fmt.Println(node.Result())
+	if !ok {
+		panic("result not expect")
+	}
+}
+
+func TestParse5(t *testing.T) {
+	ok, err := excuteFomula("9+(-1*10)-100", 0)
+	if err != nil {
+		t.Fatalf("%+v", err)
+	}
+	if ok {
+		panic("result not expect")
+	}
+}
+
+func TestParse6(t *testing.T) {
+	ok, err := excuteFomula("(-100)+67", -33)
+	if err != nil {
+		t.Fatalf("%+v", err)
+	}
+	if !ok {
+		panic("result not expect")
+	}
+}
+
+func excuteFomula(str string, res float64) (bool, error) {
+	node, err := getNode(str)
+	if err != nil {
+		return false, err
+	}
+
+	v, err := node.Result()
+	if err != nil {
+		return false, err
+	}
+
+	var f float64
+
+	v.UnmarshalValue(&f)
+
+	return f == res, nil
 }
 
 func getNode(str string) (ast.Node, error) {
