@@ -24,44 +24,23 @@ type ParserAbstract struct {
 	lowNode *OperatorNode // 保存低优先级node，高优先级node结束时会退到低优先级
 }
 
-func (np *ParserAbstract) AddSymbolNumberNode(tok token.Token) error {
-	if np.curOpNode.left != nil {
-		return ErrorFomulaFormat
-	}
-
-	curTv := np.CurTv()
-
-	if tok == token.ADD {
-		node := &NumberNode{Val: curTv.Value}
-		return np.AddNumberNode(node)
-	}
-
-	opNode := &OperatorNode{
-		left:  &NumberNode{Val: &token.F64Value{Val: 0}},
-		tok:   tok,
-		right: &NumberNode{Val: curTv.Value},
-	}
-
-	return np.AddNumberNode(opNode)
-}
-
-func (np *ParserAbstract) AddNumberNode(node Node) error {
-	if np.IsLastOne() {
-		np.Step()
-		np.AddLastNode(node)
+func (pa *ParserAbstract) AddNumberNode(node Node) error {
+	if pa.IsLastOne() {
+		pa.Step()
+		pa.AddLastNode(node)
 		return nil
 	}
 
-	np.Step()
-	curTv := np.CurTv()
-	if np.IsEndTok(curTv.Tok) {
-		np.AddLastNode(node)
+	pa.Step()
+	curTv := pa.CurTv()
+	if pa.IsEndTok(curTv.Tok) {
+		pa.AddLastNode(node)
 		return nil
 	}
 
 	tok := token.Illegal
 	if curTv.Tok.IsLeft() || curTv.Tok == token.NumberReserve {
-		np.Back() // 2(5+2) 这种表达式，默认为*需要回退。
+		pa.Back() // 2(5+2) 这种表达式，默认为*需要回退。
 		tok = token.MUL
 	} else if !curTv.Tok.IsOperator() {
 		return ErrorFomulaFormat
@@ -69,14 +48,15 @@ func (np *ParserAbstract) AddNumberNode(node Node) error {
 		tok = curTv.Tok
 	}
 
-	err := np.AddNode(node, tok)
+	err := pa.AddNode(node, tok)
 	if err != nil {
 		return err
 	}
 
-	np.Step()
+	pa.Step()
 	return nil
 }
+
 func (pa *ParserAbstract) AddLastNode(node Node) error {
 	if pa.curOpNode.left == nil {
 		pa.curOpNode.left = node
