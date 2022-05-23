@@ -15,8 +15,12 @@ type parseResgister struct {
 }
 
 func (pr *parseResgister) GetParser(tok token.Token, pa *ParserAbstract) (Parser, error) {
-	if tok == token.Number || tok == token.ADD || tok == token.SUB {
+	if tok == token.Number {
 		return &NumberParser{ParserAbstract: pa}, nil
+	}
+
+	if tok == token.ADD || tok == token.SUB {
+		return &SymbolParser{ParserAbstract: pa}, nil
 	}
 
 	if tok == token.LeftParentheses {

@@ -70,6 +70,36 @@ func TestParse6(t *testing.T) {
 	}
 }
 
+func TestParse7(t *testing.T) {
+	ok, err := excuteFomula("3-2*(-10+1)+9", 30)
+	if err != nil {
+		t.Fatalf("%+v", err)
+	}
+	if !ok {
+		panic("result not expect")
+	}
+}
+
+func TestParse8(t *testing.T) {
+	ok, err := excuteFomula("3-2*(-10*2)+9", 52)
+	if err != nil {
+		t.Fatalf("%+v", err)
+	}
+	if !ok {
+		panic("result not expect")
+	}
+}
+
+func TestParse9(t *testing.T) {
+	ok, err := excuteFomula(" 3-2*(-10*(2+3))+9", 112)
+	if err != nil {
+		t.Fatalf("%+v", err)
+	}
+	if !ok {
+		panic("result not expect")
+	}
+}
+
 func excuteFomula(str string, res float64) (bool, error) {
 	node, err := getNode(str)
 	if err != nil {

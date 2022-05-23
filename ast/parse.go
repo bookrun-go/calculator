@@ -137,10 +137,13 @@ func (pa *ParserAbstract) NewChildParser(childEndTok token.Token) (Parser, func(
 	curRoot := pa.root
 	curOpNode := pa.curOpNode
 	endTok := pa.endTok
+	lowNode := pa.lowNode
 
 	pa.endTok = childEndTok
 	pa.curOpNode = &OperatorNode{}
 	pa.root = pa.curOpNode
+	pa.lowNode = nil
+
 	op, err := ParseResgister.GetParser(pa.tvs[pa.startIndex].Tok, pa)
 	if err != nil {
 		return nil, nil, err
@@ -150,6 +153,7 @@ func (pa *ParserAbstract) NewChildParser(childEndTok token.Token) (Parser, func(
 		pa.curOpNode = curOpNode
 		pa.root = curRoot
 		pa.endTok = endTok
+		pa.lowNode = lowNode
 	}, nil
 }
 
