@@ -14,6 +14,7 @@ func TestParse1(t *testing.T) {
 	if err != nil {
 		t.Fatalf("%+v", err)
 	}
+
 	fmt.Println(node.Result())
 }
 
