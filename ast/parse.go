@@ -20,6 +20,8 @@ type ParserAbstract struct {
 	maxIndex   int
 	curOpNode  *OperatorNode // recovery
 	endTok     token.Token   // recovery
+
+	lowNode *OperatorNode // 保存低优先级node，高优先级node结束时会退到低优先级
 }
 
 func (np *ParserAbstract) AddNumberNode(node Node) error {
@@ -75,7 +77,7 @@ func (pa *ParserAbstract) AddNode(node Node, nextOpToken token.Token) error {
 		return nil
 	}
 
-	if pa.curOpNode.tok.Precedence() >= nextOpToken.Precedence() {
+	if pa.curOpNode.tok.Precedence() == nextOpToken.Precedence() {
 		newLeft := &OperatorNode{
 			left:  pa.curOpNode.left,
 			right: node,
@@ -85,11 +87,40 @@ func (pa *ParserAbstract) AddNode(node Node, nextOpToken token.Token) error {
 		pa.curOpNode.left = newLeft
 		pa.curOpNode.tok = nextOpToken
 		return nil
+	} else if pa.curOpNode.tok.Precedence() > nextOpToken.Precedence() {
+		if pa.lowNode != nil {
+			pa.curOpNode.right = node
+
+			pa.curOpNode = pa.lowNode
+			pa.lowNode = nil
+
+			newLeft := &OperatorNode{
+				left:  pa.curOpNode.left,
+				right: pa.curOpNode.right,
+				tok:   pa.curOpNode.tok,
+			}
+
+			pa.curOpNode.left = newLeft
+			pa.curOpNode.tok = nextOpToken
+			pa.curOpNode.right = nil
+		} else {
+			newLeft := &OperatorNode{
+				left:  pa.curOpNode.left,
+				right: node,
+				tok:   pa.curOpNode.tok,
+			}
+
+			pa.curOpNode.left = newLeft
+			pa.curOpNode.tok = nextOpToken
+		}
+		return nil
 	} else {
 		newRigth := &OperatorNode{
 			left: node,
 			tok:  nextOpToken,
 		}
+
+		pa.lowNode = pa.curOpNode
 
 		pa.curOpNode.right = newRigth
 
